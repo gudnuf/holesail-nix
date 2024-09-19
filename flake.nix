@@ -37,6 +37,12 @@
             dontNpmBuild = true;
             nodejs = pkgs.nodejs_22;
 
+            postInstall = ''
+              substituteInPlace $out/lib/node_modules/holesail/manager.js \
+                --replace "path.resolve(__dirname, './index.js')" \
+                          "'$out/lib/node_modules/holesail/index.js'"
+            '';
+
             meta = with pkgs.lib; {
               description = "Holesail let's you instantly share any application running on a specific port from your local computer.";
               homepage = "https://holesail.io";

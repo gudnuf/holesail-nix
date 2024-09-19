@@ -7,7 +7,7 @@ This repository contains a Nix flake for building [holesail](https://holesail.io
 To use this flake, make sure you have Nix installed and flakes enabled. Then, you can run:
 
 ```bash
-nix build github:gudnuf/holesail-nix
+nix build github:gudnuf/holesail-nix/main
 ```
 
 This will build the `holesail` package using the flake.
@@ -15,11 +15,5 @@ This will build the `holesail` package using the flake.
 You can also add this flake as an input to your own flake:
 
 ```nix
-inputs.holesail.url = "github:yourusername/holesail-flake";
-```
-
-And then reference the package in your `outputs`:
-
-```nix
-packages.default = inputs.holesail.packages.${system}.default;
+inputs.holesail.url = "github:gudnuf/holesail-nix/main";
 ```

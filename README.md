@@ -4,7 +4,11 @@ This repository contains a Nix flake for building [holesail](https://holesail.io
 
 ## Usage
 
-To use this flake, make sure you have Nix installed and flakes enabled. Then, you can run:
+To use this flake, make sure you have Nix installed and [flakes enabled](https://nixos.wiki/wiki/Flakes).
+
+Note: The [Determinate Nix Installer](https://determinate.systems/) enables flakes by default. This is my preferred method of installing nix.
+
+Then, you can run:
 
 ```bash
 nix build github:gudnuf/holesail-nix/main

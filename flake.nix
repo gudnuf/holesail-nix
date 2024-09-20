@@ -26,8 +26,8 @@
             src = pkgs.fetchFromGitHub {
               owner = "gudnuf";
               repo = pname;
-              rev = "fix-for-flake";
-              hash = "sha256-lbL/EGZ8TPVvmXn+lyBj3wEh7lOCLs7hpRiC9wv2g0Q=";
+              rev = "fix-for-flake2";
+              hash = "sha256-afYSjQpjF2+d0Zkc8uQdw8X+qFd6uE/KQvmQZBEI9NU=";
             };
 
             npmDepsHash = "sha256-lZEpP14sN62LOv85VsGEIWAHXQuRt6lfhbp/iGpffX4=";

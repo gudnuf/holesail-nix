@@ -24,24 +24,18 @@
             version = "1.7.3";
 
             src = pkgs.fetchFromGitHub {
-              owner = "gudnuf";
+              owner = "holesail";
               repo = pname;
-              rev = "fix-for-flake";
-              hash = "sha256-afYSjQpjF2+d0Zkc8uQdw8X+qFd6uE/KQvmQZBEI9NU=";
+              rev = "8b96ee980324b2bd04956a76767987924f7daa95";
+              hash = "sha256-7YTBwjU0xzoDqlRqfdQZrJRvSXTtT8rpA1zRdLSdFoU=";
             };
 
-            npmDepsHash = "sha256-lZEpP14sN62LOv85VsGEIWAHXQuRt6lfhbp/iGpffX4=";
+            npmDepsHash = "sha256-aos1WOsVsgZG6h0g242/mz5yiN/7V+G8to8IyaKldFI=";
 
             npmPackFlags = [ "--ignore-scripts" ];
 
             dontNpmBuild = true;
             nodejs = pkgs.nodejs_22;
-
-            postInstall = ''
-              substituteInPlace $out/lib/node_modules/holesail/manager.js \
-                --replace "path.resolve(__dirname, './index.js')" \
-                          "'$out/lib/node_modules/holesail/index.js'"
-            '';
 
             meta = with pkgs.lib; {
               description = "Holesail let's you instantly share any application running on a specific port from your local computer.";

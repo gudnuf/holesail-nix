@@ -13,7 +13,7 @@ Note: The [Determinate Nix Installer](https://determinate.systems/) enables flak
 To enter a dev shell with `holesail` and `holesail-manager` use:
 
 ```bash
-nix develop github:gudnuf/holesail-nix/main
+nix develop github:gudnuf/holesail-nix/latest
 ```
 This will give you a dev shell with the package installed.
 
@@ -22,7 +22,7 @@ This will give you a dev shell with the package installed.
 To install holesail use:
 
 ```bash
-nix profile install github:gudnuf/holesail-nix/main
+nix profile install github:gudnuf/holesail-nix/latest
 ```
 
 ### In another flake
@@ -30,7 +30,7 @@ nix profile install github:gudnuf/holesail-nix/main
 You can also add this flake as an input to your own flake:
 
 ```nix
-inputs.holesail.url = "github:gudnuf/holesail-nix/main";
+inputs.holesail.url = "github:gudnuf/holesail-nix/latest";
 ```
 
 ## Use Holesail

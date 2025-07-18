@@ -10,7 +10,7 @@ Note: The [Determinate Nix Installer](https://determinate.systems/) enables flak
 
 ### Develop
 
-To enter a dev shell with `holesail` and `holesail-manager` use:
+To enter a dev shell with `holesail` use:
 
 ```bash
 nix develop github:gudnuf/holesail-nix/latest

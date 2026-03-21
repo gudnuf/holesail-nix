@@ -10,6 +10,9 @@
       systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
       eachSystem = nixpkgs.lib.genAttrs systems;
     in {
+      nixosModules.holesail = import ./modules/holesail.nix self;
+      nixosModules.default = self.nixosModules.holesail;
+
       packages = eachSystem (system: let
         pkgs = nixpkgs.legacyPackages.${system};
       in {

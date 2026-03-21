@@ -102,6 +102,44 @@ let
 
   enabledTunnels = filterAttrs (_: t: t.enable) cfg.tunnels;
 
+  mkCommand = name: t:
+    let
+      keySource =
+        if t.keyFile != null then ''"$(cat ${t.keyFile})"''
+        else ''"$(cat /var/lib/holesail-${name}/key)"'';
+      port = if t.port != null then t.port else 5409;
+    in
+    if t.role == "server" then
+      lib.concatStringsSep " " (lib.filter (s: s != "") [
+        "${lib.getExe t.package} --live ${toString t.port}"
+        "--host ${t.host}"
+        "--key ${keySource}"
+        (lib.optionalString t.udp "--udp")
+        (lib.optionalString t.public "--public")
+        (lib.optionalString (t.log != null) "--log ${toString t.log}")
+      ])
+    else if t.role == "client" then
+      lib.concatStringsSep " " (lib.filter (s: s != "") [
+        "${lib.getExe t.package} --connect ${keySource}"
+        (lib.optionalString (t.port != null) "--port ${toString t.port}")
+        "--host ${t.host}"
+        (lib.optionalString t.udp "--udp")
+        (lib.optionalString t.public "--public")
+        (lib.optionalString (t.log != null) "--log ${toString t.log}")
+      ])
+    else # filemanager
+      lib.concatStringsSep " " (lib.filter (s: s != "") [
+        "${lib.getExe t.package} --filemanager ${t.directory}"
+        "--port ${toString port}"
+        "--host ${t.host}"
+        "--key ${keySource}"
+        "--username ${t.username}"
+        ''--password "$(cat ${t.passwordFile})"''
+        "--role ${t.filemanagerRole}"
+        (lib.optionalString t.public "--public")
+        (lib.optionalString (t.log != null) "--log ${toString t.log}")
+      ]);
+
 in {
   options.services.holesail.tunnels = mkOption {
     type = types.attrsOf (types.submodule tunnelOpts);
@@ -149,6 +187,59 @@ in {
       }
     ]) enabledTunnels);
 
-    # systemd services added in Task 4
+    systemd.services = mapAttrs' (name: t:
+      nameValuePair "holesail-${name}" {
+        description = "Holesail ${t.role} tunnel (${name})";
+        wantedBy = [ "multi-user.target" ];
+        after = [ "network-online.target" ];
+        wants = [ "network-online.target" ];
+        path = [ t.package ];
+
+        preStart = lib.optionalString (t.keyFile == null && t.role != "client") ''
+          if [ ! -f /var/lib/holesail-${name}/key ]; then
+            ${pkgs.openssl}/bin/openssl rand -hex 32 > /var/lib/holesail-${name}/key
+            chmod 600 /var/lib/holesail-${name}/key
+          fi
+        '';
+
+        script = mkCommand name t;
+
+        serviceConfig = {
+          Type = "simple";
+          Restart = "always";
+          RestartSec = 10;
+          User = t.user;
+          Group = t.group;
+          StateDirectory = "holesail-${name}";
+
+          # Hardening
+          NoNewPrivileges = true;
+          ProtectSystem = "strict";
+          ProtectHome = true;
+          PrivateTmp = true;
+          PrivateDevices = true;
+        } // lib.optionalAttrs (t.keyFile != null) {
+          ReadOnlyPaths = [ t.keyFile ]
+            ++ lib.optional (t.passwordFile != null) t.passwordFile;
+        } // lib.optionalAttrs (t.passwordFile != null && t.keyFile == null) {
+          ReadOnlyPaths = [ t.passwordFile ];
+        } // lib.optionalAttrs (t.role == "filemanager" && t.directory != null) {
+          ReadWritePaths = [ t.directory ];
+        };
+      }
+    ) enabledTunnels;
+
+    users.users = mkIf (any (t: t.user == "holesail") (attrValues enabledTunnels)) {
+      holesail = {
+        isSystemUser = true;
+        group = "holesail";
+        home = "/var/lib/holesail";
+        createHome = true;
+      };
+    };
+
+    users.groups = mkIf (any (t: t.group == "holesail") (attrValues enabledTunnels)) {
+      holesail = {};
+    };
   };
 }

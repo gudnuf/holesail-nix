@@ -197,7 +197,7 @@ in {
 
         preStart = lib.optionalString (t.keyFile == null && t.role != "client") ''
           if [ ! -f /var/lib/holesail-${name}/key ]; then
-            ${pkgs.openssl}/bin/openssl rand -hex 32 > /var/lib/holesail-${name}/key
+            head -c 48 /dev/urandom | tr -dc 'ybndrfg8ejkmcpqxot1uwisza345h769' | head -c 52 > /var/lib/holesail-${name}/key
             chmod 600 /var/lib/holesail-${name}/key
           fi
         '';

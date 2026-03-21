@@ -241,5 +241,9 @@ in {
     users.groups = mkIf (any (t: t.group == "holesail") (attrValues enabledTunnels)) {
       holesail = {};
     };
+
+    environment.systemPackages = [
+      self.packages.${pkgs.stdenv.hostPlatform.system}.holesail-status
+    ];
   };
 }

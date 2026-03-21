@@ -18,6 +18,12 @@
       in {
         holesail = import ./package.nix { inherit pkgs; };
         default = self.packages.${system}.holesail;
+      } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
+        holesail-status = pkgs.writeShellApplication {
+          name = "holesail-status";
+          runtimeInputs = [ pkgs.systemd pkgs.coreutils pkgs.gawk pkgs.gnused ];
+          text = builtins.readFile ./scripts/holesail-status.sh;
+        };
       });
 
       devShells = eachSystem (system: let

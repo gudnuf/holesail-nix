@@ -47,7 +47,7 @@ let
       public = mkOption {
         type = types.bool;
         default = false;
-        description = "Server/filemanager: announce to DHT (disables private mode). Client: force public connection mode.";
+        description = "Server/filemanager only: announce to DHT (disables private mode). Not valid for client role (auto-detected from hs:// URL).";
       };
 
       log = mkOption {
